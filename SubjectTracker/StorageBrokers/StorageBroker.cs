@@ -24,7 +24,7 @@ namespace SubjectTracker.StorageBrokers
 
                 //this.configuration.GetConnectionString("DefaultConnection");
 
-            optionsBuilder.UseSqlServer(connetionResult);
+            optionsBuilder.UseSqlServer(connetionResult); 
         }
     }
 }
