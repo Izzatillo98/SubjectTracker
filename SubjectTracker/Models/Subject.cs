@@ -1,6 +1,6 @@
 ﻿namespace SubjectTracker.Models
 {
-    public class Model
+    public class Subject
     {
         public Guid Id  { get; set; }
 

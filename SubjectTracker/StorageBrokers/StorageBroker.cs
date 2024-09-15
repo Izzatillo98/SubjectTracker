@@ -1,29 +1,36 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STX.EFxceptions.SqlServer;
+using SubjectTracker.Models;
 
 namespace SubjectTracker.StorageBrokers
 {
-    public interface IStorageBroker
+    public interface istorageBroker
     {
-
+        Task<Subject> InsertSubjectAsync(Subject subject);
     }
-    public class StorageBroker : EFxceptionsContext , IStorageBroker
+    public class StorageBroker : EFxceptionsContext , istorageBroker
     {
         private IConfiguration configuration;
-        //public StorageBroker(IConfiguration configuration)
-        //{
-        //    this.configuration = configuration;
-        //}
-        public StorageBroker() 
+        public StorageBroker(IConfiguration configuration)
         {
+            this.configuration = configuration;
             this.Database.Migrate();       
         }
+                  
+        public DbSet<Subject> subject{ get; set; }
+
+        public async Task<Subject> InsertSubjectAsync(Subject subject)
+        {
+           StorageBroker storageBroker = new StorageBroker(this.configuration);
+            await storageBroker.subject.AddAsync(subject);
+            await storageBroker.SaveChangesAsync();
+
+            return subject;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connetionResult = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=SubjectTrackerCoreApiDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
-
-                //this.configuration.GetConnectionString("DefaultConnection");
-
+            string connetionResult = this.configuration.GetConnectionString("DefaultConnection");            
             optionsBuilder.UseSqlServer(connetionResult); 
         }
     }

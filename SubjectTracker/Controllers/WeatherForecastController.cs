@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SubjectTracker.Models;
 using SubjectTracker.StorageBrokers;
 
 namespace SubjectTracker.Controllers
@@ -12,19 +13,22 @@ namespace SubjectTracker.Controllers
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
-
+        private readonly istorageBroker istorageBroker;
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IStorageBroker storageBroker)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, istorageBroker storageBroker)
         {
-            
+            this.istorageBroker = storageBroker;
             _logger = logger;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task< IEnumerable<WeatherForecast>> Get()
         {
-            StorageBroker storageBroker = new StorageBroker();
+          Subject Subject = new Subject();
+            Subject.Name = "SubjectTracker";
+            Subject.Id = Guid.NewGuid();
+            await istorageBroker.InsertSubjectAsync(Subject); 
 
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
